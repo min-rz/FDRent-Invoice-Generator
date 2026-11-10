@@ -183,7 +183,7 @@ table{border-collapse:collapse;width:100%}
 .hr.lg b{font-size:13.5pt}
 .stw{font-size:9pt;line-height:1.28}
 .stw h3{margin:0 0 1.4mm;font-size:9.5pt;font-weight:700}
-.stw .ib{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0 9mm;margin:2.5mm 0 3.5mm}
+.stw .ib{align-items:start;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0 9mm;margin:2.5mm 0 3.5mm}
 .stw .ib .kv{width:100%}.stw .ib .kv td{padding:.5mm 4px .5mm 0}.stw .ib .kv td:first-child{min-width:0;width:29mm}.stw .ib .kv td+td{white-space:normal;overflow-wrap:anywhere}
 .tb.stt{table-layout:fixed;margin:0}
 .tb.stt th{font-size:8.5pt;padding:1.6mm 1.2mm}
@@ -198,7 +198,7 @@ table{border-collapse:collapse;width:100%}
 .stw .stn ul{list-style:none;margin:0;padding:0}.stw .stn li{padding-left:1.2em;text-indent:-1.2em;margin-bottom:.9mm}.stw .stn li::before{content:"-";display:inline-block;width:1.2em;text-indent:0;text-align:center}
 .stw .stb{border:.3mm solid #000}
 .stw .sbh{background:#ff0;border-bottom:.3mm solid #000;text-align:center;font-weight:700;font-size:9pt;padding:1mm 2mm}
-.stw .sbs{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:1.6mm 2.2mm 2.2mm;text-align:center;overflow-wrap:anywhere}.stw .sbs i{display:block;height:18mm}
+.stw .sbs{display:grid;grid-template-columns:1fr 1fr;gap:3mm;padding:1.6mm 2.2mm 2.2mm;text-align:center;overflow-wrap:anywhere}.stw .sbs i{display:block;height:18mm}.stw .sbs .sb{width:auto}.stw .sbs .im{height:18mm;width:100%;max-width:44mm}.stw .sbs .l{top:3.5mm;height:11mm}.stw .sbs .t{left:13mm;height:18mm}
 .stw .stc{border:.3mm solid #000;padding:2.4mm 3mm;margin-top:4mm}
 .stw .chh{display:flex;justify-content:space-between;align-items:baseline;gap:2mm;margin-bottom:1.8mm}.stw .chh h3{margin:0;white-space:nowrap}.stw .chh span{font-size:7.5pt;color:#444;text-align:right}
 .stw .bb{display:grid;gap:.8mm;margin-bottom:2.2mm;font-size:8pt}
@@ -276,10 +276,17 @@ if(n<12)return SA[n];if(n<20)return tb(n-10)+' belas';if(n<100)return r(10,'pulu
 if(n<1e3)return r(100,'ratus');if(n<2e3)return 'seribu'+(n%1e3?' '+tb(n%1e3):'');if(n<1e6)return r(1e3,'ribu');if(n<1e9)return r(1e6,'juta');if(n<1e12)return r(1e9,'miliar');return r(1e12,'triliun')}
 const terb=n=>n>0?tb(n).replace(/\b\w/g,c=>c.toUpperCase())+' Rupiah':'Nol Rupiah';
 /* konfigurasi terpusat */
-const DEF={co:{nama:'FDR RENT CAR | TOUR & TRAVEL',alamat:'Jl. Prof. Dr. Hamka No. 6, Kelurahan Purwoyoso, Kecamatan Ngaliyan, Kota Semarang, Provinsi Jawa Tengah',telp:'0851-8185-1173',email:'fdrrenttourandtravel@gmail.com',nib:'1220001421142',npwp:'3276052012010007',sbg:'FDR Rent Car | Tour and Travel',pj:'Fikri Darulfalah'},bank:{bank:'',rek:'',an:''},pre:{inv:'INV',kw:'KW',book:'BOOK',st:'ST'}};
+const DEF={co:{nama:'FDR RENT CAR | TOUR & TRAVEL',alamat:'Jl. Prof. Dr. Hamka No. 6, Kelurahan Purwoyoso, Kecamatan Ngaliyan, Kota Semarang, Provinsi Jawa Tengah',telp:'0851-8185-1173',email:'fdrrenttourandtravel@gmail.com',nib:'1220001421142',npwp:'3276052012010007',sbg:'FDR Rent Car',pj:'Fikri Darulfalah'},bank:{bank:'',rek:'',an:''},pre:{inv:'INV',kw:'KW',book:'BOOK',st:'ST'}};
 const sv=LS('fdr_set')||{};const ST={};for(const k in DEF)ST[k]={...DEF[k],...(sv[k]||{})};
+const OLDSBG='FDR Rent Car | Tour and Travel',fixSbg=()=>{if(ST.co&&ST.co.sbg===OLDSBG)ST.co.sbg=DEF.co.sbg};fixSbg();
 let H=LS('fdr_hist')||[],D=LS('fdr_draft')||{},V={},M=LS('fdr_master')||{veh:[],cus:[]};
 const LEG=H.slice();
+const LEGN=[['1 Hari Terhitung Mulai Pukul 01.00 – 23.00 WIB','1 hari terhitung mulai pukul 01.00 – 23.00 WIB.'],['Meninggalkan Jaminan Berupa Identitas dan Kendaraan','Meninggalkan jaminan berupa identitas dan kendaraan.'],['Pemakaian di luar Jateng & DIY Terhitung 2 Hari','Pemakaian di luar Jateng & DIY terhitung 2 hari.'],['Mengembalikan Unit dengan Posisi BBM Seperti Semula','Mengembalikan unit dengan posisi BBM seperti semula.'],['kerusakan body mobil atau spareparts maka','kerusakan bodi mobil atau suku cadang, maka'],['sabuk pengaman, apabila terjadi','sabuk pengaman. Apabila terjadi'],['atau E-tilang','atau e-tilang'],['di mulai','dimulai'],['Per jam','per jam']];
+const NEWS1='Pemakaian sewa dimulai *_per hari atau per tanggal_*. Dimulai pukul 01.00 - 23.00 WIB. Selebihnya akan dikenakan biaya overtime 10% per jam dari harga sewa.';
+const LEGST=[['Pemakaian sewa di mulai *_per hari_* atau *_per tanggal_*. Dimulai pukul 01.00 - 23.00 WIB. Selebihnya akan dikenakan biaya overtime 10% Per jam dari harga sewa.',NEWS1],['Pemakaian sewa dimulai *_per hari_* atau *_per tanggal_*, mulai pukul 01.00 – 23.00 WIB. Selebihnya akan dikenakan biaya overtime 10% per jam dari harga sewa.',NEWS1],['Mengembalikan unit dengan posisi BBM seperti semula.','Mengembalikan unit dan posisi BBM seperti semula.']];
+const fixN=(x,t)=>typeof x==='string'?LEGN.reduce((a,[f,r])=>a.split(f).join(r),t==='st'?LEGST.reduce((a,[f,r])=>a.split(f).join(r),x):x):x;
+const fixO=(o,t)=>{if(!o)return o;if(o.catatan)o.catatan=fixN(o.catatan,t);if(t==='st'&&!o.hari&&(o.jangka||o.harga||o.nama)){const n=parseInt(o.jangka)||1;o.hari=n;if(+o.harga&&n>1)o.harga=Math.round(o.harga/n)}return o};
+H.forEach(h=>fixO(h.data,h.type));for(const k in D)fixO(D[k],k);
 const DL=new Set(Object.keys(D).filter(k=>D[k]));
 const LB={kw:'Buat kwitansi baru, atau ambil data dari invoice',inv:'Ambil data dari nota booking',invd:'Ambil data dari nota booking',st:'Ambil data dari invoice atau booking',book:'Ambil data dari invoice, kwitansi, atau serah terima'};
 const pull=(h,t)=>{const o=h.data,s=h.type,c=calc(s,o),d=getD(t),ok=new Set(FORMS[t].flatMap(([,f])=>f.map(x=>x.k))),dt=v=>v?v.length>10?v:v+'T00:00':'',dd=v=>(v||'').slice(0,10);
@@ -291,7 +298,7 @@ if(s==='st')stt=dp>0?'DP':BAYAR[0];
 d.rute=o.rute||o.tujuan||d.rute;d.dpMode='Nominal';d.dpVal=dp;
 if(t==='inv'){d.tipe='Custom';d.harga=c.tag}
 if(t==='invd')d.items[0]={...d.items[0],q:1,h:c.tag};
-if(t==='st'){d.harga=c.tag;d.tujuan=d.rute;d.jangka=o.hari?o.hari+' hari':''}
+if(t==='st'){d.hari=+o.hari||d.hari||1;d.harga=Math.round(c.tag/d.hari);d.tujuan=d.rute}
 if(t==='book'){d.harga=c.tag;d.status=stt||d.status;d.sb=d.status==='Lunas'?'Lunas':d.status==='DP'?'DP diterima':'Menunggu pembayaran';
 d.tujuan=o.tujuan||o.rute||d.tujuan;if(s==='invd')d.driver='Dengan driver';else if(s==='inv')d.driver='Tanpa driver';
 if(!o.hari&&o.jangka){const n=parseInt(o.jangka);if(n)d.hari=n}}};
@@ -299,8 +306,8 @@ const T={inv:{t:'Invoice Rental Mobil',p:'inv'},invd:{t:'Invoice Rental Mobil + 
 const ROUTE={inv:'invoice',invd:'invoice',kw:'kwitansi',book:'booking',st:'serah-terima'};
 const NOTE={inv:'1 hari terhitung berdasarkan periode pemakaian.\nMeninggalkan jaminan berupa identitas dan kendaraan.\nPemakaian di luar Jateng & DIY mengikuti ketentuan perusahaan.\nKendaraan dikembalikan dengan posisi BBM seperti semula.',
 invd:'Harga belum termasuk parkir dan tips driver.\nKebutuhan makan dan penginapan crew ditanggung pihak yang ditentukan dalam perjanjian.\nCrew berhak menolak rute yang tidak sesuai perjanjian atau membahayakan penumpang dan kendaraan.\nKetentuan DP, pembatalan, dan batas pelunasan mengikuti kesepakatan kedua pihak.'};
-NOTE.kw=['1 Hari Terhitung Mulai Pukul 01.00 – 23.00 WIB','Meninggalkan Jaminan Berupa Identitas dan Kendaraan','Pemakaian di luar Jateng & DIY Terhitung 2 Hari','Mengembalikan Unit dengan Posisi BBM Seperti Semula'].join('\n');
-NOTE.st=['Pemakaian sewa di mulai *_per hari_* atau *_per tanggal_*. Dimulai pukul 01.00 - 23.00 WIB. Selebihnya akan dikenakan biaya overtime 10% Per jam dari harga sewa.','Meninggalkan jaminan berupa identitas dan kendaraan.','Pemakaian di luar Jawa Tengah dan DIY terhitung 2 hari.','Mengembalikan unit dan posisi BBM seperti semula.','Apabila terjadi kerusakan body mobil atau spareparts maka pihak penyewa akan dikenakan penggantian biaya sesuai kerusakan dan biaya sewa selama mobil dalam perbaikan bengkel.','Tidak menggunakan mobil rental sebagai jaminan kepada pihak lain.','Wajib menggunakan sabuk pengaman, apabila terjadi pelanggaran atau E-tilang maka denda akan dibebankan kepada pihak penyewa.'].join('\n');
+NOTE.kw=['1 hari terhitung mulai pukul 01.00 – 23.00 WIB.','Meninggalkan jaminan berupa identitas dan kendaraan.','Pemakaian di luar Jateng & DIY terhitung 2 hari.','Mengembalikan unit dengan posisi BBM seperti semula.'].join('\n');
+NOTE.st=['Pemakaian sewa dimulai *_per hari atau per tanggal_*. Dimulai pukul 01.00 - 23.00 WIB. Selebihnya akan dikenakan biaya overtime 10% per jam dari harga sewa.','Meninggalkan jaminan berupa identitas dan kendaraan.','Pemakaian di luar Jawa Tengah dan DIY terhitung 2 hari.','Mengembalikan unit dan posisi BBM seperti semula.','Apabila terjadi kerusakan bodi mobil atau suku cadang, maka pihak penyewa akan dikenakan penggantian biaya sesuai kerusakan dan biaya sewa selama mobil dalam perbaikan bengkel.','Tidak menggunakan mobil rental sebagai jaminan kepada pihak lain.','Wajib menggunakan sabuk pengaman. Apabila terjadi pelanggaran atau e-tilang maka denda akan dibebankan kepada pihak penyewa.'].join('\n');
 const BAYAR=['Belum dibayar','DP','Lunas'];
 /* nomor dokumen */
 function nextNo(t){const p=ST.pre[T[t].p],ymd=today().replace(/-/g,''),a=p+'-'+ymd+'-';let n=H.filter(h=>h.no.startsWith(a)).length+1;while(H.some(h=>h.no===a+String(n).padStart(3,'0')))n++;return a+String(n).padStart(3,'0')}
@@ -309,15 +316,15 @@ if(t==='inv')Object.assign(b,{hari:1,unit:1,tipe:'Per hari',trans:'Manual',statu
 if(t==='invd')Object.assign(b,{hari:1,status:BAYAR[0],items:['Sewa kendaraan','Driver','BBM','Tol','Penyeberangan','Parkir','Lain-lain'].map((n,i)=>({n,q:i<2?1:0,h:0}))});
 if(t==='kw')Object.assign(b,{jenis:'DP',nominal:0});
 if(t==='book')Object.assign(b,{unit:1,hari:1,driver:'Tanpa driver',sb:'Menunggu pembayaran',status:BAYAR[0]});
-if(t==='st')Object.assign(b,{area:'Jawa Tengah'});return b}
-const getD=t=>{const d=D[t]||(D[t]=blank(t));if(t==='st'&&!d._nv){d._nv=1;if(!d.catatan)d.catatan=NOTE.st}return d};
+if(t==='st')Object.assign(b,{area:'Jawa Tengah',hari:1});return b}
+const getD=t=>{const d=D[t]||(D[t]=blank(t));fixO(d,t);if(t==='st'&&!d._nv){d._nv=1;if(!d.catatan)d.catatan=NOTE.st}return d};
 const saveD=()=>LS('fdr_draft',D);
 /* perhitungan */
-function calc(t,d){let total=t==='invd'?d.items.reduce((a,i)=>a+(+i.q||0)*(+i.h||0),0):t==='inv'&&d.tipe==='Per hari'?(+d.hari||0)*(+d.harga||0)*(+d.unit||1):+d.harga||0;
+function calc(t,d){let total=t==='invd'?d.items.reduce((a,i)=>a+(+i.q||0)*(+i.h||0),0):t==='st'?(+d.harga||0)*(+d.hari||0):t==='inv'&&d.tipe==='Per hari'?(+d.hari||0)*(+d.harga||0)*(+d.unit||1):+d.harga||0;
 const pph=t==='invd'&&d.pph?Math.round(total*.02):0,tag=total-pph;
 const dp=d.dpMode==='Persentase'?Math.round(tag*(+d.dpVal||0)/100):+d.dpVal||0;return{total,pph,tag,dp,sisa:tag-dp}}
 function sums(t,d){const c=calc(t,d),r=(l,v,b)=>`<tr${b?' class="b"':''}><td>${l}</td><td>${R(v)}</td></tr>`;
-return '<table class="sm">'+(t==='invd'&&d.pph?r('Total sebelum PPh',c.total)+r('PPh 2%',c.pph)+r('Total setelah PPh',c.tag,1):r(t==='st'?'Harga sewa':'Total tagihan',c.total,1))+(c.dp?r('DP',c.dp)+r(t==='st'?'Kekurangan':'Sisa pembayaran',c.sisa,1):'')+'</table>'}
+return '<table class="sm">'+(t==='invd'&&d.pph?r('Total sebelum PPh',c.total)+r('PPh 2%',c.pph)+r('Total setelah PPh',c.tag,1):r(t==='st'?'Total biaya sewa':'Total tagihan',c.total,1))+(c.dp?r('DP',c.dp)+r(t==='st'?'Kekurangan':'Sisa pembayaran',c.sisa,1):'')+'</table>'}
 /* definisi form */
 const F=(k,l,t='text',o={})=>({k,l,t,...o}),SP=s=>({sp:s});
 const PEL=[SP('cus'),F('nama','Nama pelanggan','text',{r:1}),F('telp','Nomor telepon','tel',{r:1})];
@@ -326,12 +333,11 @@ const BYR=[F('status','Status pembayaran','select',{o:BAYAR}),SP('dp')];
 const FORMS={
 inv:[['Pelanggan',[SP('src'),...PEL]],['Detail rental',[F('no','Nomor invoice'),F('tgl','Tanggal transaksi','date',{r:1}),F('mulai','Tanggal mulai','date'),F('selesai','Tanggal selesai','date'),F('hari','Jumlah hari','num',{r:1}),F('pax','PAX','num'),...KEND,F('trans','Transmisi','select',{o:['Manual','Matic']}),F('tipe','Tipe harga','select',{o:['Per hari','Paket','Custom']}),F('harga','Harga (per hari, atau total jika Paket/Custom)','money',{r:1}),F('unit','Jumlah unit','num'),F('rute','Tujuan / rute','text',{w:1})]],['Pembayaran',[...BYR,F('metode','Metode pembayaran','select',{o:['Cash','Transfer']}),SP('sum')]],['Catatan',[F('catatan','Catatan','ta',{w:1})]]],
 invd:[['Pelanggan',[SP('src'),SP('cus'),F('nama','Nama pelanggan / perusahaan','text',{r:1}),F('telp','Nomor telepon','tel',{r:1}),F('pic','PIC')]],['Detail perjalanan',[F('no','Nomor invoice'),F('tgl','Tanggal invoice','date'),F('mulai','Tanggal mulai','date',{r:1}),F('selesai','Tanggal selesai','date',{r:1}),F('hari','Jumlah hari','num'),F('pax','PAX','num'),...KEND,F('driver','Nama driver'),F('kdriver','Nomor kontak driver','tel'),F('rute','Rute perjalanan','text',{r:1,w:1})]],['Komponen biaya',[SP('items'),F('pph','Potong PPh 2%','chk')]],['Pembayaran',[...BYR,SP('sum')]],['Catatan',[F('catatan','Catatan','ta',{w:1})]]],
-kw:[['Sumber data',[SP('src'),SP('cus')]],['Data kwitansi',[F('no','Nomor kwitansi'),F('tgl','Tanggal pembayaran','date',{r:1}),F('nama','Nama pelanggan','text',{r:1}),F('telp','Nomor telepon','tel'),SP('veh'),F('kendaraan','Nama kendaraan'),F('plat','Plat nomor'),F('mulai','Tanggal rental','date'),F('pax','PAX','num'),F('hari','Jumlah hari','num'),F('harga','Harga sewa / nilai transaksi','money'),F('jenis','Jenis pembayaran','select',{o:['DP','Pelunasan','Pembayaran penuh','Pembayaran tambahan','Lainnya']}),F('nominal','Nominal pembayaran diterima','money',{r:1}),SP('tb'),F('keperluan','Keperluan pembayaran','text',{r:1,w:1}),F('catatan','Catatan (NOTE) - satu baris satu poin','ta',{w:1})]]],
+kw:[['Sumber data',[SP('src'),SP('cus')]],['Data kwitansi',[F('no','Nomor kwitansi'),F('tgl','Tanggal pembayaran','date',{r:1}),F('nama','Nama pelanggan','text',{r:1}),F('telp','Nomor telepon','tel'),SP('veh'),F('kendaraan','Nama kendaraan'),F('plat','Plat nomor'),F('mulai','Tanggal rental','date'),F('pax','PAX','num'),F('hari','Jumlah hari','num'),F('harga','Harga sewa / nilai transaksi','money'),F('jenis','Jenis pembayaran','select',{o:['DP','Pelunasan','Pembayaran penuh','Pembayaran tambahan','Lainnya']}),F('nominal','Nominal pembayaran diterima','money',{r:1}),SP('tb'),F('keperluan','Keperluan pembayaran','text',{r:1,w:1}),F('catatan','Catatan (satu baris satu poin)','ta',{w:1})]]],
 book:[['Pelanggan',[SP('src'),...PEL,F('email','Email','email'),F('pic','PIC')]],['Detail booking',[F('no','Nomor booking'),F('tgl','Tanggal booking','date'),F('mulai','Tanggal mulai rental','date',{r:1}),F('selesai','Tanggal selesai rental','date'),F('hari','Jumlah hari','num'),F('unit','Jumlah unit','num'),...KEND,F('pax','Jumlah pax','num'),F('driver','Driver','select',{o:['Tanpa driver','Dengan driver']}),F('tujuan','Tujuan'),F('rute','Rute'),F('catatan','Catatan','ta',{w:1})]],['Pembayaran',[F('harga','Harga rental (total)','money'),SP('dp'),F('sb','Status booking','select',{o:['Menunggu pembayaran','DP diterima','Booking confirmed','Lunas','Dibatalkan','Selesai']}),F('status','Status pembayaran','select',{o:BAYAR}),SP('sum')]]],
-st:[['Penyewa',[SP('src'),SP('cus'),F('nama','Nama penyewa','text',{r:1}),F('telp','Nomor telepon','tel'),F('alamat','Alamat penyewa','text',{w:1})]],['Data rental',[F('no','Nomor nota'),F('tgl','Tanggal nota','date',{r:1}),F('jangka','Jangka waktu sewa'),F('jaminan','Jaminan'),SP('veh'),F('kendaraan','Jenis kendaraan','text',{r:1}),F('plat','Plat nomor','text',{r:1}),F('harga','Harga sewa','money'),F('mulai','Mulai pemakaian','datetime-local'),F('selesai','Selesai pemakaian','datetime-local'),F('area','Area penggunaan','select',{o:['Jawa Tengah','Jawa Barat','Jawa Timur','Daerah Istimewa Yogyakarta','Bali','Sumatera','Lainnya']}),F('tujuan','Tujuan'),F('dpVal','DP','money'),SP('sum')]],
-['Kendaraan keluar',[F('k_penyerah','Nama penyerah'),F('k_penerima','Nama penerima')]],
-['Notes',[F('catatan','Notes (satu baris satu poin, tulis *_teks_* untuk tebal miring)','ta',{w:1,rows:9})]]]};
-const REQ={inv:['nama','telp','tgl','kendaraan','harga','hari'],invd:['nama','telp','mulai','selesai','kendaraan','rute'],kw:['nama','nominal','keperluan','tgl'],book:['nama','telp','mulai','kendaraan'],st:['nama','kendaraan','plat','tgl']};
+st:[['Pelanggan',[SP('src'),SP('cus'),F('nama','Nama pelanggan','text',{r:1}),F('telp','Nomor telepon','tel'),F('alamat','Alamat pelanggan','text',{w:1})]],['Data rental',[F('no','Nomor nota'),F('tgl','Tanggal nota','date',{r:1}),F('hari','Jangka waktu sewa (hari)','num',{r:1}),F('jaminan','Jaminan'),SP('veh'),F('kendaraan','Jenis kendaraan','text',{r:1}),F('plat','Plat nomor','text',{r:1}),F('harga','Harga sewa (per hari)','money'),F('mulai','Mulai pemakaian','datetime-local'),F('selesai','Selesai pemakaian','datetime-local'),F('area','Area penggunaan','select',{o:['Jawa Tengah','Jawa Barat','Jawa Timur','Daerah Istimewa Yogyakarta','Bali','Sumatera','Lainnya']}),F('tujuan','Tujuan'),F('dpVal','DP','money'),SP('sum')]],
+['Catatan',[F('catatan','Catatan (satu baris satu poin, tulis *_teks_* untuk tebal miring)','ta',{w:1,rows:9})]]]};
+const REQ={inv:['nama','telp','tgl','kendaraan','harga','hari'],invd:['nama','telp','mulai','selesai','kendaraan','rute'],kw:['nama','nominal','keperluan','tgl'],book:['nama','telp','mulai','kendaraan'],st:['nama','kendaraan','plat','tgl','hari']};
 const LBL={};for(const t in FORMS)FORMS[t].forEach(([,fs])=>fs.forEach(f=>f.k&&(LBL[f.k]=f.l)));
 /* komponen form */
 function fld(f,d){if(f.sp)return SPR[f.sp](d);const id='f_'+f.k,v=f.k==='area'?areaN(d[f.k]):d[f.k]??'',a=`id="${id}" data-k="${f.k}" data-t="${f.t}" aria-describedby="e_${f.k}"`;let i;
@@ -349,13 +355,13 @@ items:d=>`<div class="f w ov"><table class="it"><thead><tr><th>Komponen</th><th>
 tb:d=>`<div class="f w"><label>Terbilang</label><div id="tb"><b>${terb(d.nominal)}</b></div></div>`,
 cus:d=>M.cus.length?`<div class="f w"><label for="pc">Pilih pelanggan tersimpan</label><select id="pc"><option value="">Isi manual</option>${M.cus.map((c,i)=>`<option value="${i}">${E(c.nama)}${c.telp?' - '+E(c.telp):''}</option>`).join('')}</select></div>`:'',
 veh:d=>M.veh.length?`<div class="f w"><label for="pv">Pilih kendaraan tersimpan</label><select id="pv"><option value="">Isi manual</option>${M.veh.map((c,i)=>`<option value="${i}">${E(c.nama)} ${E(c.plat)} (${c.status})</option>`).join('')}</select></div>`:'',
-src:d=>{const k={kw:['inv','invd'],inv:['book'],invd:['book'],st:['inv','invd','book'],book:['inv','invd','kw','st']}[CT];if(!k)return '';const iv=H.filter(h=>k.includes(h.type));return `<div class="f w"><label for="src">${LB[CT]}</label><select id="src"><option value="">${CT==='kw'?'Buat Kwitansi Baru':'Isi manual'}</option>${iv.map(h=>`<option value="${h.id}">${T[h.type].t}: ${E(h.no)} - ${E(h.nama)}</option>`).join('')}</select></div>`}};
+src:d=>{const k={kw:['inv','invd'],inv:['book'],invd:['book'],st:['inv','invd','book'],book:['inv','invd','kw','st']}[CT];if(!k)return '';const iv=H.filter(h=>k.includes(h.type));return `<div class="f w"><label for="src">${LB[CT]}</label><select id="src"><option value="">${{kw:'Buat kwitansi baru',book:'Buat nota booking baru',inv:'Buat invoice baru',invd:'Buat invoice baru',st:'Buat nota serah terima baru'}[CT]}</option>${iv.map(h=>`<option value="${h.id}">${T[h.type].t}: ${E(h.no)} - ${E(h.nama)}</option>`).join('')}</select></div>`}};
 const AREA_OLD={Jateng:'Jawa Tengah',Jabar:'Jawa Barat',Jatim:'Jawa Timur',DIY:'Daerah Istimewa Yogyakarta'},areaN=v=>AREA_OLD[v]||v;
 let CT='inv';
-function formHTML(t){const d=getD(t);CT=t;return (DL.has(t)?`<div class="bar dr" role="group" aria-label="Draft"><span>${ic('info')}Draft sebelumnya ditemukan.</span><button type="button" class="p" data-a="cont">Lanjutkan</button><button type="button" data-a="fresh">Buat Baru</button></div>`:'')+`<form novalidate onsubmit="return false"><p class="req"><span class="rq" aria-hidden="true">*</span> wajib diisi</p>`+FORMS[t].map(([h,fs])=>`<fieldset><legend>${h}</legend><div class="g">${fs.map(f=>fld(f,d)).join('')}</div></fieldset>`).join('')+`<div class="bar act"><button type="button" class="p" data-a="prev">${ic('eye')}Lihat Preview</button><button type="button" class="d" data-a="reset">${ic('undo')}Reset Form</button></div></form>`}
+function formHTML(t){const d=getD(t);CT=t;return (DL.has(t)?`<div class="bar dr" role="group" aria-label="Draft"><span>${ic('info')}Draft sebelumnya ditemukan.</span><button type="button" class="p" data-a="cont">Lanjutkan</button><button type="button" data-a="fresh">Buat baru</button></div>`:'')+`<form novalidate onsubmit="return false"><p class="req"><span class="rq" aria-hidden="true">*</span> wajib diisi</p>`+FORMS[t].map(([h,fs])=>`<fieldset><legend>${h}</legend><div class="g">${fs.map(f=>fld(f,d)).join('')}</div></fieldset>`).join('')+`<div class="bar act"><button type="button" class="p" data-a="prev">${ic('eye')}Lihat preview</button><button type="button" class="d" data-a="reset">${ic('undo')}Reset form</button></div></form>`}
 /* template dokumen */
 const kv=(r,c)=>`<table class="kv${c?' '+c:''}">${r.filter(x=>x[1]&&x[1]!=='-').map(x=>`<tr><td>${x[0]}</td><td>: ${x[1]}</td></tr>`).join('')}</table>`;
-const hdr=t=>`<div class="hd"><div class="hr${t.length>14?' lg':''}"><img src="logo.png" alt=""><b>${E(ST.co.nama)}</b><span class="tt${t.length>14?' lg':''}">${t}</span></div><p class="ad">Alamat : ${E(ST.co.alamat)}. No. Telepon : ${E(ST.co.telp)}<br>${E(ST.co.email)}. NIB : ${E(ST.co.nib)}. NPWP : ${E(ST.co.npwp)}</p></div>`;
+const hdr=t=>`<div class="hd"><div class="hr${t.length>14?' lg':''}"><img src="logo.png" alt=""><b>${E(ST.co.nama)}</b><span class="tt${t.length>14?' lg':''}">${t}</span></div><p class="ad">Alamat : ${E(ST.co.alamat).replace(/,\s*(Provinsi)/,',<br>$1')}. No. Telepon : ${E(ST.co.telp)}<br>${E(ST.co.email)}. NIB : ${E(ST.co.nib)}. NPWP : ${E(ST.co.npwp)}</p></div>`;
 const dh=(t,l,lb,d,tk)=>hdr(t)+`<div class="pl">${kv(l)}${kv([[lb,E(d.no)],['Tanggal',fd(d[tk||'tgl'])]],'mt')}</div>`;
 const per=d=>d.mulai?fd(d.mulai)+(d.selesai?' s/d '+fd(d.selesai):''):'';
 const perb=d=>d.mulai?fd(d.mulai)+(d.selesai&&d.selesai.slice(0,10)!==d.mulai.slice(0,10)?'<br>s/d '+fd(d.selesai):''):'';
@@ -365,11 +371,11 @@ const ttd=()=>`<div class="sb"><div>Hormat kami</div><div class="im"><img class=
 const blk=(l,n)=>`<div class="sb"><div>${l}</div><div class="im"></div><div>&nbsp;</div><div>(${n||'................'})</div></div>`;
 const sgn=l=>`<div class="sg${l?' sp2':''}">${l||''}${ttd()}</div>`;
 const sR=(r,s)=>r.map(x=>`<tr class="tot"><td colspan="${s-1}">${x[0]}</td><td>${x[1]}</td></tr>`).join('');
-const nRow=(d,s,stamp)=>{const l=(d.catatan||'').split('\n').map(x=>x.replace(/^\s*[-–•]\s*/,'').trim()).filter(Boolean);
-if(!l.length&&!stamp)return '';return `<tr class="nt"><td colspan="${s-1}">${l.length?'NOTE :<ul>'+l.map(x=>`<li>${E(x)}</li>`).join('')+'</ul>':''}</td><td class="sp">${stamp?'<img src="lunas.png" alt="LUNAS">':''}</td></tr>`};
+const nRow=(d,s,stamp)=>{const l=fixN(d.catatan||'').split('\n').map(x=>x.replace(/^\s*[-–•]\s*/,'').trim()).filter(Boolean);
+if(!l.length&&!stamp)return '';return `<tr class="nt"><td colspan="${s-1}">${l.length?'Catatan:<ul>'+l.map(x=>`<li>${E(x)}</li>`).join('')+'</ul>':''}</td><td class="sp">${stamp?'<img src="lunas.png" alt="LUNAS">':''}</td></tr>`};
 const sumR=(t,d)=>{const c=calc(t,d),r=[];
-if(t==='invd'&&d.pph)r.push(['Total sebelum PPh',R(c.total)],['PPh 2%',R(c.pph)],['Total setelah PPh',R(c.tag)]);else r.push([t==='st'?'Harga Sewa':'Total',R(c.total)]);
-if(c.dp)r.push(['DP',R(c.dp)],[t==='st'?'Kekurangan':'Sisa Pembayaran',R(c.sisa)]);return r};
+if(t==='invd'&&d.pph)r.push(['Total sebelum PPh',R(c.total)],['PPh 2%',R(c.pph)],['Total setelah PPh',R(c.tag)]);else r.push([t==='st'?'Total biaya sewa':'Total',R(c.total)]);
+if(c.dp)r.push(['DP',R(c.dp)],[t==='st'?'Kekurangan':'Sisa pembayaran',R(c.sisa)]);return r};
 const COL6='<colgroup><col style="width:6%"><col style="width:20%"><col style="width:8%"><col style="width:34%"><col style="width:8%"><col style="width:24%"></colgroup>';
 const tb6=(d,tgl,ket,harga,sum,stamp,h,extra)=>`<table class="tb">${COL6}<thead><tr><th>No</th><th>Tanggal</th><th>Pax</th><th>Keterangan</th><th>Hari</th><th>Harga</th></tr></thead><tbody><tr style="height:${h}mm"><td>1</td><td>${tgl}</td><td>${d.pax||''}</td><td>${ket}</td><td>${d.hari?d.hari+' Hari':''}</td><td>${harga}</td></tr>${sR(sum,6)}${extra||''}${nRow(d,6,stamp)}</tbody></table>`;
 /* serah terima: komponen layout */
@@ -378,32 +384,32 @@ const BBM=['E','1/4','1/2','3/4','F'];
 const wkt=s=>{const m=/^(\d{4})-(\d\d)-(\d\d)(?:T(\d\d):(\d\d))?/.exec(s||'');if(!m)return[];const x=new Date(+m[1],m[2]-1,+m[3]),p=o=>x.toLocaleDateString('id-ID',o);return[p({weekday:'long'}),String(+m[3]),p({month:'long'}),m[1],m[4]?m[4]+'.'+m[5]:'']};
 const dlist=s=>{const w=wkt(s);return['Hari','Tanggal','Bulan','Tahun','Jam'].map((l,i)=>`<div class="dl"><span>${l}</span><span>: ${E(w[i]||'')}</span></div>`).join('')};
 const CARS=[['Samping kiri','car-side.png'],['Samping kanan','car-side-r.png'],['Depan','car-front.png'],['Belakang','car-back.png']];
-const sbox=d=>`<div class="stb"><div class="sbh">KENDARAAN KELUAR</div><div class="sbs"><div>Menyerahkan<i></i>(${E(d.k_penyerah)||'................'})</div><div>Menerima<i></i>(${E(d.k_penerima)||'................'})</div></div></div>`;
+const sbox=d=>`<div class="stb"><div class="sbh">Kendaraan keluar</div><div class="sbs"><div class="sb"><div>Menyerahkan</div><div class="im"><img class="l" src="logo.png" alt=""><img class="t" src="ttd.png" alt=""></div><div>FDR Rent Car</div><div>(${E(ST.co.pj)})</div></div><div class="sb"><div>Menerima</div><div class="im"></div><div>&nbsp;</div><div>(${E(d.nama)||'................'})</div></div></div></div>`;
 const gauge=()=>`<div class="bb"><div class="bbr"><span>BBM</span>${BBM.map(x=>`<span>${x}</span>`).join('')}</div><div class="bbr"><span></span>${BBM.map(()=>'<span class="c"></span>').join('')}</div></div>`;
-const notesST=d=>{const l=(d.catatan||d.kerusakan||'').split('\n').map(x=>x.replace(/^\s*[-–•]\s*/,'').trim()).filter(Boolean);
-return l.length?`<div class="stn"><h3>NOTES :</h3><ul>${l.map(x=>`<li>${E(x).replace(/\*_(.+?)_\*/g,'<b><i>$1</i></b>')}</li>`).join('')}</ul></div>`:''};
+const notesST=d=>{const l=fixN(d.catatan||d.kerusakan||'','st').split('\n').map(x=>x.replace(/^\s*[-–•]\s*/,'').trim()).filter(Boolean);
+return l.length?`<div class="stn"><h3>Catatan:</h3><ul>${l.map(x=>`<li>${E(x).replace(/\*_(.+?)_\*/g,'<b><i>$1</i></b>')}</li>`).join('')}</ul></div>`:''};
 const DOC={
 kw:d=>{const c=+d.harga||0,n=+d.nominal||0,sisa=c-n,lunas=d.jenis==='Pelunasan'||d.jenis==='Pembayaran penuh'||(c>0&&n>=c);
-const sum=c>0&&n!==c?[['Total Tagihan',R(c)],[/^(DP|Pelunasan)$/.test(d.jenis)?d.jenis+' Diterima':'Pembayaran Diterima',R(n)]].concat(sisa>0?[['Sisa Pembayaran',R(sisa)]]:[]):[['Total',R(n)]];
-const ket=pp(d.kendaraan?'Sewa Mobil '+E(d.kendaraan):'')+pp(d.plat?'Plat : '+E(d.plat):'')+pp(d.keperluan?'Untuk pembayaran : <i>'+E(d.keperluan)+'</i>':'');
+const sum=c>0&&n!==c?[['Total tagihan',R(c)],[/^(DP|Pelunasan)$/.test(d.jenis)?d.jenis+' diterima':'Pembayaran diterima',R(n)]].concat(sisa>0?[['Sisa pembayaran',R(sisa)]]:[]):[['Total',R(n)]];
+const ket=pp(d.kendaraan?'Sewa mobil '+E(d.kendaraan):'')+pp(d.plat?'Plat : '+E(d.plat):'')+pp(d.keperluan?'Untuk pembayaran : <i>'+E(d.keperluan)+'</i>':'');
 return dh('KWITANSI',[['Pelanggan',E(d.nama)],['No. Telpon',E(d.telp)]],'No. Kwitansi',d)+tb6(d,fd(d.mulai||d.tgl),ket,R(c||n),sum,lunas,54,`<tr class="tr"><td colspan="6"><i>Terbilang : ${terb(n)}</i></td></tr>`)+bank()+sgn()},
 inv:d=>{const c=calc('inv',d),u=+d.unit||1;
-const ket=pp('Sewa Mobil '+E(d.kendaraan)+(d.trans?' / '+(d.trans==='Matic'?'AT':'MT'):''))+pp(d.plat?'Plat : '+E(d.plat):'')+pp(d.tipe==='Per hari'&&u>1?u+' unit x '+R(d.harga)+' / hari':'')+pp(d.rute?'Tujuan : '+E(d.rute):'');
+const ket=pp('Sewa mobil '+E(d.kendaraan)+(d.trans?' / '+(d.trans==='Matic'?'AT':'MT'):''))+pp(d.plat?'Plat : '+E(d.plat):'')+pp(d.tipe==='Per hari'&&u>1?u+' unit x '+R(d.harga)+' / hari':'')+pp(d.rute?'Tujuan : '+E(d.rute):'');
 return dh('INVOICE',[['Pelanggan',E(d.nama)],['No. Telpon',E(d.telp)]],'No. Invoice',d)+tb6(d,perb(d)||fd(d.tgl),ket,R(c.total),sumR('inv',d),d.status==='Lunas',44)+kv([['Status',E(d.status)],['Metode',E(d.metode)]])+bank()+sgn(blk('Pelanggan',E(d.nama)))},
 invd:d=>{const its=d.items.filter(i=>(+i.q||0)*(+i.h||0)>0);
 const rows=its.map((i,k)=>`<tr><td>${k+1}</td><td>${E(i.n)}</td><td>${i.q}</td><td>${R(i.h)}</td><td>${R(i.q*i.h)}</td></tr>`).join('');
 return dh('INVOICE',[['Pelanggan',E(d.nama)],['No. Telpon',E(d.telp)],['PIC',E(d.pic)],['Periode',per(d)+(d.hari?' ('+d.hari+' hari)':'')],['Rute',E(d.rute)],['Kendaraan',E(d.kendaraan)+(d.plat?' | '+E(d.plat):'')],['PAX',d.pax],['Driver',E(d.driver)+(d.kdriver?' ('+E(d.kdriver)+')':'')],['Status',E(d.status)]],'No. Invoice',d)
 +`<table class="tb"><colgroup><col style="width:6%"><col style="width:42%"><col style="width:12%"><col style="width:20%"><col style="width:20%"></colgroup><thead><tr><th>No</th><th>Komponen</th><th>Jumlah</th><th>Harga</th><th>Subtotal</th></tr></thead><tbody>${rows}<tr style="height:16mm"><td></td><td></td><td></td><td></td><td></td></tr>${sR(sumR('invd',d),5)}${nRow(d,5,d.status==='Lunas')}</tbody></table>`+bank()+sgn(blk('Pelanggan',E(d.nama)))},
 book:d=>{const c=calc('book',d);
-const ket=pp('Sewa Mobil '+E(d.kendaraan))+pp(d.plat?'Plat : '+E(d.plat):'')+pp((+d.unit||1)>1?d.unit+' unit':'')+pp(d.driver?E(d.driver):'')+pp(d.tujuan?'Tujuan : '+E(d.tujuan):'')+pp(d.rute?'Rute : '+E(d.rute):'');
+const ket=pp('Sewa mobil '+E(d.kendaraan))+pp(d.plat?'Plat : '+E(d.plat):'')+pp((+d.unit||1)>1?d.unit+' unit':'')+pp(d.driver?E(d.driver):'')+pp(d.tujuan?'Tujuan : '+E(d.tujuan):'')+pp(d.rute?'Rute : '+E(d.rute):'');
 return dh('NOTA BOOKING',[['Pelanggan',E(d.nama)],['No. Telpon',E(d.telp)],['Email',E(d.email)],['PIC',E(d.pic)]],'No. Booking',d)+tb6(d,perb(d)||'-',ket,R(c.total),sumR('book',d),d.status==='Lunas',44)+kv([['Status booking',E(d.sb)],['Status pembayaran',E(d.status)]])+bank()+sgn(blk('Pelanggan',E(d.nama)))},
 st:d=>{const c=calc('st',d),on=a=>areaN(d.area)===a;
-const kiri=[['No. Nota',E(d.no)],['Tanggal',fd(d.tgl||d.k_tgl)],['Nama penyewa',E(d.nama)],['Alamat penyewa',E(d.alamat)]],kanan=[['No. Telepon',E(d.telp)],['Jangka waktu sewa',E(d.jangka)],['Jaminan',E(d.jaminan)],['DP',c.dp?R(c.dp):''],['Kekurangan',c.dp?R(c.sisa):'']];
+const kiri=[['Nama penyewa',E(d.nama)],['Nomor telepon',E(d.telp)],['Alamat penyewa',E(d.alamat)]],kanan=[['Nomor nota',E(d.no)],['Jangka waktu sewa',d.hari?E(d.hari)+' hari':''],['Jaminan',E(d.jaminan)],['DP',c.dp?R(c.dp):''],['Kekurangan',c.dp?R(c.sisa):'']];
 const area=AREAS.map(([f,s])=>`<div class="ar${on(f)?' on':''}"><i class="cx${on(f)?' on':''}"></i>${s}</div>`).join('');
 return hdr('NOTA SERAH TERIMA KENDARAAN')+`<div class="stw"><div class="ib">${kv(kiri)}${kv(kanan)}</div>`
-+`<table class="tb stt"><colgroup><col style="width:17%"><col style="width:12%"><col style="width:15%"><col style="width:21%"><col style="width:21%"><col style="width:14%"></colgroup><thead><tr><th>Jenis Kendaraan</th><th>Plat Nomor</th><th>Harga Sewa</th><th>Mulai Pemakaian</th><th>Selesai Pemakaian</th><th>Area</th></tr></thead><tbody><tr><td>${E(d.kendaraan)}</td><td>${E(d.plat)}</td><td>${c.total?R(c.total):''}</td><td>${dlist(d.mulai)}</td><td>${dlist(d.selesai)}</td><td>${area}</td></tr></tbody></table>`
-+`<div class="tj"><div class="bx y"><b>TOTAL BIAYA SEWA</b><span class="am">${c.total?R(c.total):'Rp.'}</span></div><div class="bx"><b>TUJUAN :</b>${E(d.tujuan)}</div></div>`
-+`<div class="stg">${notesST(d)||'<div></div>'}${sbox(d)}</div><div class="stc"><div class="chh"><h3>CHECKLIST KENDARAAN</h3><span>Tandai kerusakan pada gambar</span></div>${gauge()}<div class="cars">${CARS.map(x=>`<div class="car"><img src="${x[1]}" alt=""><span>${x[0]}</span></div>`).join('')}</div></div></div>`}};
++`<table class="tb stt"><colgroup><col style="width:15%"><col style="width:13%"><col style="width:17%"><col style="width:20%"><col style="width:21%"><col style="width:14%"></colgroup><thead><tr><th>Jenis kendaraan</th><th>Plat nomor</th><th>Harga sewa</th><th>Mulai pemakaian</th><th>Selesai pemakaian</th><th>Area</th></tr></thead><tbody><tr><td>${E(d.kendaraan)}</td><td>${E(d.plat)}</td><td style="white-space:nowrap">${+d.harga?R(d.harga)+'/hari':''}</td><td>${dlist(d.mulai)}</td><td>${dlist(d.selesai)}</td><td>${area}</td></tr></tbody></table>`
++`<div class="tj"><div class="bx y"><b>Total biaya sewa</b><span class="am">${c.total?R(c.total):'Rp.'}</span></div><div class="bx"><b>Tujuan:</b>${E(d.tujuan)}</div></div>`
++`<div class="stg">${notesST(d)||'<div></div>'}${sbox(d)}</div><div class="stc"><div class="chh"><h3>Checklist kendaraan</h3><span>Tandai kerusakan pada gambar</span></div>${gauge()}<div class="cars">${CARS.map(x=>`<div class="car"><img src="${x[1]}" alt=""><span>${x[0]}</span></div>`).join('')}</div></div></div>`}};
 /* validasi */
 function val(t,d){const e=[];REQ[t].forEach(k=>{if(d[k]===''||d[k]==null||d[k]===0)e.push([k,'Wajib diisi'])});const c=calc(t,d);
 if(t==='invd'&&c.total<=0)e.push(['items','Isi minimal satu komponen biaya']);
@@ -530,13 +536,13 @@ const refreshList=()=>{const l=$('#rl');if(l){const r=fl();l.innerHTML=rl(r);$('
 function attach(){
 let first=1;
 UNS.push(FB.onSnapshot(FB.collection(DB,'dokumen'),sn=>{
-H=sn.docs.map(x=>x.data()).sort((a,b)=>(+b.id||0)-(+a.id||0));LS('fdr_hist',H);refreshList();
+H=sn.docs.map(x=>x.data()).sort((a,b)=>(+b.id||0)-(+a.id||0));H.forEach(h=>fixO(h.data,h.type));LS('fdr_hist',H);refreshList();
 if(first&&!sn.metadata.fromCache){first=0;if(!LS('fdr_mig')){const ids=new Set(H.map(h=>h.id)),miss=LEG.filter(h=>h&&h.id&&!ids.has(h.id));
 if(miss.length){const ch=[];for(let i=0;i<miss.length;i+=400)ch.push(miss.slice(i,i+400));
 Promise.all(ch.map(c=>{const b=FB.writeBatch(DB);c.forEach(h=>b.set(FB.doc(DB,'dokumen',h.id),clean(h)));return b.commit()})).then(()=>{LS('fdr_mig',1);toast(miss.length+' dokumen lama di perangkat ini diunggah ke cloud',5000)}).catch(cloudErr)}else LS('fdr_mig',1)}}
 },cloudErr));
 UNS.push(FB.onSnapshot(FB.doc(DB,'app','settings'),sn=>{if(sn.metadata.hasPendingWrites)return;
-if(sn.exists()){const v=sn.data();for(const k in DEF)ST[k]={...DEF[k],...(v[k]||{})};LS('fdr_set',ST);if(location.hash==='#/settings'&&!document.activeElement.matches('input,select,textarea'))render()}
+if(sn.exists()){const v=sn.data();for(const k in DEF)ST[k]={...DEF[k],...(v[k]||{})};fixSbg();LS('fdr_set',ST);if(location.hash==='#/settings'&&!document.activeElement.matches('input,select,textarea'))render()}
 else if(!sn.metadata.fromCache)cput('app','settings',ST)},cloudErr));
 UNS.push(FB.onSnapshot(FB.doc(DB,'app','master'),sn=>{if(sn.metadata.hasPendingWrites)return;
 if(sn.exists()){const v=sn.data();M={veh:v.veh||[],cus:v.cus||[]};LS('fdr_master',M);if(location.hash==='#/settings'&&!document.activeElement.matches('input,select,textarea'))render()}
