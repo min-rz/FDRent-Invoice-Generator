@@ -182,8 +182,19 @@ table{border-collapse:collapse;width:100%}
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:6px}.two .tb{margin:0}
 @media print{@page{size:A4;margin:12.5mm 20mm}html,body{background:#fff}.top,nav,.skip,#toast,.noprint{display:none!important}main{margin:0!important;padding:0!important;max-width:none}main>*:not(.stage){display:none!important}.stage{display:block;padding:0;border:0;background:none;overflow:visible;border-radius:0}.paper{zoom:1!important;border:0;box-shadow:none!important;padding:0;width:auto;margin:0}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+/* login */
+body.lock .top,body.lock nav,body.lock main,body.lock .skip,body.lock #toast{display:none!important}
+#gate{min-height:100dvh;display:grid;place-items:center;padding:24px 16px calc(24px + env(safe-area-inset-bottom,0px))}
+#gate[hidden],#lg[hidden],#gl[hidden]{display:none!important}
+#lg{width:min(100%,400px);padding:28px 22px 24px;background:#fff;border:1px solid var(--ln);border-radius:var(--r);box-shadow:0 1px 2px rgba(0,0,0,.04),0 12px 32px rgba(0,0,0,.06)}
+#lg img{height:40px;width:auto;display:block;margin-bottom:18px}
+#lg h1{font-size:26px;line-height:1.2;letter-spacing:-.02em;font-weight:750}
+#lg>p{margin:6px 0 20px;color:var(--mut)}
+#lg .f{margin-bottom:14px}
+#lg button{width:100%;margin-top:6px}
+#gl{color:var(--mut)}
 </style></head>
-<body>
+<body class="lock">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
 <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></symbol>
@@ -220,7 +231,9 @@ table{border-collapse:collapse;width:100%}
 </nav>
 <main id="app" tabindex="-1"></main>
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="gate"><p id="gl" role="status">Memuat…</p><form id="lg" novalidate hidden><img src="logo.png" alt="FDR Rent"><h1>Masuk</h1><p>Masuk untuk membuka dokumen dan riwayat.</p><div class="f"><label for="le">Email</label><input id="le" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false"></div><div class="f"><label for="lp">Password</label><input id="lp" type="password" autocomplete="current-password"></div><div class="er" id="le_err" role="alert"></div><button type="submit" class="p">Masuk</button></form></div>
 
+<script src="firebase-bundle.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const ic=n=>`<svg class="ic" aria-hidden="true" focusable="false"><use href="#i-${n}"/></svg>`;
@@ -240,6 +253,7 @@ const terb=n=>n>0?tb(n).replace(/\b\w/g,c=>c.toUpperCase())+' Rupiah':'Nol Rupia
 const DEF={co:{nama:'FDR RENT CAR | TOUR & TRAVEL',alamat:'Jl. Prof. Dr. Hamka No. 6, Kelurahan Purwoyoso, Kecamatan Ngaliyan, Kota Semarang, Provinsi Jawa Tengah',telp:'0851-8185-1173',email:'fdrrenttourandtravel@gmail.com',nib:'1220001421142',npwp:'3276052012010007',sbg:'FDR Rent Car | Tour and Travel',pj:'Fikri Darulfalah'},bank:{bank:'',rek:'',an:''},pre:{inv:'INV',kw:'KW',book:'BOOK',st:'ST'}};
 const sv=LS('fdr_set')||{};const ST={};for(const k in DEF)ST[k]={...DEF[k],...(sv[k]||{})};
 let H=LS('fdr_hist')||[],D=LS('fdr_draft')||{},V={},M=LS('fdr_master')||{veh:[],cus:[]};
+const LEG=H.slice();
 const DL=new Set(Object.keys(D).filter(k=>D[k]));
 const LB={kw:'Buat kwitansi baru, atau ambil data dari invoice',inv:'Ambil data dari nota booking',invd:'Ambil data dari nota booking',st:'Ambil data dari invoice atau booking'};
 const pull=(h,t)=>{const o=h.data,c=calc(h.type,o),d=getD(t),ok=new Set(FORMS[t].flatMap(([,f])=>f.map(x=>x.k))),dt=v=>v?v.length>10?v:v+'T00:00':'';
@@ -353,7 +367,7 @@ function val(t,d){const e=[];REQ[t].forEach(k=>{if(d[k]===''||d[k]==null||d[k]==
 if(t==='invd'&&c.total<=0)e.push(['items','Isi minimal satu komponen biaya']);
 if(t==='kw'&&!(+d.nominal>0)&&!e.some(x=>x[0]==='nominal'))e.push(['nominal','Nominal harus lebih dari nol']);
 if(t!=='kw'&&c.dp>c.tag)e.push(['dpVal','DP tidak boleh melebihi total tagihan ('+R(c.tag)+')']);return e}
-function saveDoc(t,d){const id=d._id||(d._id=Date.now()+'');const c={id,type:t,no:d.no,nama:d.nama,telp:d.telp||'',plat:d.plat||'',tgl:d.tgl||d.k_tgl,data:JSON.parse(JSON.stringify(d))};const i=H.findIndex(h=>h.id===id);i<0?H.unshift(c):H[i]=c;LS('fdr_hist',H);saveD()}
+function saveDoc(t,d){const id=d._id||(d._id=Date.now()+'');const c={id,type:t,no:d.no,nama:d.nama,telp:d.telp||'',plat:d.plat||'',tgl:d.tgl||d.k_tgl,data:JSON.parse(JSON.stringify(d))};const i=H.findIndex(h=>h.id===id);i<0?H.unshift(c):H[i]=c;LS('fdr_hist',H);cput('dokumen',id,c);saveD()}
 const fname=d=>String(d.no||'dokumen').trim().replace(/[\\/:*?"<>|]+/g,'-');
 function pdf(t){const d=getD(t),old='FDR Dokumen Rental';document.title=fname(d);const r=()=>{document.title=old;removeEventListener('afterprint',r)};addEventListener('afterprint',r);try{window.print()}catch(e){r();alert('Gagal membuat PDF. Periksa kembali data dokumen.')}}
 /* download PNG: render dokumen ke gambar, nama file = nomor dokumen */
@@ -405,14 +419,14 @@ const ml=m=>M[m].length?`<ul class="hl" style="margin-top:14px">${M[m].map((x,i)
 const mf=(m,n,l,x='')=>`<div class="f"><label for="m_${m}_${n}">${l}</label><input id="m_${m}_${n}" ${x}></div>`,mo=(m,n,l,o)=>`<div class="f"><label for="m_${m}_${n}">${l}</label><select id="m_${m}_${n}">${o.map(v=>`<option>${v}</option>`).join('')}</select></div>`;
 const mst=()=>`<fieldset><legend>Master kendaraan</legend><div class="g">${mf('veh','nama','Nama kendaraan')}${mf('veh','tipe','Tipe')}${mo('veh','trans','Transmisi',['Manual','Matic'])}${mf('veh','plat','Plat nomor')}${mf('veh','tarif','Tarif harian (Rp)','inputmode="numeric" data-mm="1"')}${mf('veh','tarifd','Tarif dengan driver (Rp)','inputmode="numeric" data-mm="1"')}${mo('veh','status','Status',['Tersedia','Disewa','Maintenance','Tidak tersedia'])}</div><div class="bar"><button type="button" class="p" data-a="addm" data-m="veh">${ic('plus')}Tambah kendaraan</button></div><div class="ov">${ml('veh')}</div></fieldset><fieldset><legend>Master customer</legend><div class="g">${mf('cus','nama','Nama')}${mf('cus','telp','Nomor telepon')}${mf('cus','email','Email')}${mf('cus','alamat','Alamat')}${mf('cus','catatan','Catatan')}</div><div class="bar"><button type="button" class="p" data-a="addm" data-m="cus">${ic('plus')}Tambah customer</button></div><div class="ov">${ml('cus')}</div></fieldset>`;
 function setg(){const S=(p,l)=>{const[a,b]=p.split('.');return `<div class="f"><label for="s_${a}_${b}">${l}</label><input id="s_${a}_${b}" data-s="${p}" value="${E(ST[a][b])}"></div>`};
-return PH('Pengaturan','Profil perusahaan, rekening, dan data master. Perubahan tersimpan otomatis.')+`<fieldset><legend>Profil perusahaan</legend><div class="g">${S('co.nama','Nama')}${S('co.alamat','Alamat')}${S('co.telp','Telepon')}${S('co.email','Email')}${S('co.nib','NIB')}${S('co.npwp','NPWP')}${S('co.sbg','Nama perusahaan di tanda tangan')}${S('co.pj','Nama penandatangan')}</div></fieldset><fieldset><legend>Pembayaran</legend><div class="g">${S('bank.bank','Bank')}${S('bank.rek','Nomor rekening')}${S('bank.an','Nama rekening')}</div></fieldset><fieldset><legend>Prefix nomor dokumen</legend><div class="g">${S('pre.inv','Prefix invoice')}${S('pre.kw','Prefix kwitansi')}${S('pre.book','Prefix booking')}${S('pre.st','Prefix serah terima')}</div></fieldset>${mst()}`}
+return PH('Pengaturan','Profil perusahaan, rekening, dan data master. Perubahan tersimpan otomatis.')+accHTML()+`<fieldset><legend>Profil perusahaan</legend><div class="g">${S('co.nama','Nama')}${S('co.alamat','Alamat')}${S('co.telp','Telepon')}${S('co.email','Email')}${S('co.nib','NIB')}${S('co.npwp','NPWP')}${S('co.sbg','Nama perusahaan di tanda tangan')}${S('co.pj','Nama penandatangan')}</div></fieldset><fieldset><legend>Pembayaran</legend><div class="g">${S('bank.bank','Bank')}${S('bank.rek','Nomor rekening')}${S('bank.an','Nama rekening')}</div></fieldset><fieldset><legend>Prefix nomor dokumen</legend><div class="g">${S('pre.inv','Prefix invoice')}${S('pre.kw','Prefix kwitansi')}${S('pre.book','Prefix booking')}${S('pre.st','Prefix serah terima')}</div></fieldset>${mst()}`}
 function go(t,view){V[t]=view;if(t==='inv'||t==='invd')V.sel=t;location.hash.slice(2)===ROUTE[t]?render():location.hash='#/'+ROUTE[t]}
 /* event */
 const app=$('#app');
 app.addEventListener('input',e=>{const x=e.target;
 if(x.id==='q'){V.q=x.value;const r=fl();$('#rl').innerHTML=rl(r);$('#cnt').textContent=r.length+' dokumen';return}
 if(x.dataset.mm){const n=+x.value.replace(/\D/g,'');x.value=n?num(n):'';return}
-if(x.dataset.s){const[a,b]=x.dataset.s.split('.');ST[a][b]=x.value;LS('fdr_set',ST);return}
+if(x.dataset.s){const[a,b]=x.dataset.s.split('.');ST[a][b]=x.value;saveSet();return}
 const t=CT,d=getD(t),mon=v=>+String(v).replace(/\D/g,'')||0;
 if(x.dataset.i!==undefined){const it=d.items[x.dataset.i];if(x.dataset.f==='h'){it.h=mon(x.value);x.value=it.h?num(it.h):''}else it.q=+x.value||0;$('#s'+x.dataset.i).textContent=R(it.q*it.h)}
 else if(x.dataset.k){const k=x.dataset.k,ty=x.dataset.t;let v=ty==='chk'?x.checked:ty==='money'?mon(x.value):ty==='num'?(x.value===''?'':+x.value):x.value;if(ty==='money')x.value=v?num(v):'';d[k]=v;
@@ -436,23 +450,66 @@ if(a==='unsel'){e.preventDefault();V.sel=null;render();return}
 if(a==='cont'){DL.delete(t);render();return}
 if(a==='fresh'){D[t]=null;DL.delete(t);saveD();render();return}
 if(a==='addm'){const m=b.dataset.m,g=n=>($('#m_'+m+'_'+n)||{}).value||'',n=k=>+g(k).replace(/\D/g,'')||0,o=m==='cus'?{nama:g('nama'),telp:g('telp'),email:g('email'),alamat:g('alamat'),catatan:g('catatan')}:{nama:g('nama'),tipe:g('tipe'),trans:g('trans'),plat:g('plat'),tarif:n('tarif'),tarifd:n('tarifd'),status:g('status')};
-if(!o.nama.trim()){$('#m_'+m+'_nama').focus();return}M[m].push(o);LS('fdr_master',M);render();toast('Data ditambahkan');return}
-if(a==='delm'){if(confirm('Hapus data ini?')){M[b.dataset.m].splice(+b.dataset.n,1);LS('fdr_master',M);render();toast('Data dihapus')}return}
+if(!o.nama.trim()){$('#m_'+m+'_nama').focus();return}M[m].push(o);saveMaster();render();toast('Data ditambahkan');return}
+if(a==='delm'){if(confirm('Hapus data ini?')){M[b.dataset.m].splice(+b.dataset.n,1);saveMaster();render();toast('Data dihapus')}return}
 if(a==='prev'){const d=getD(t),er=val(t,d);document.querySelectorAll('.er').forEach(n=>n.textContent='');document.querySelectorAll('.bad').forEach(n=>n.classList.remove('bad'));document.querySelectorAll('[aria-invalid]').forEach(n=>n.removeAttribute('aria-invalid'));
 if(er.length){er.forEach(([k,m])=>{const n=$('#e_'+k);if(n){n.textContent=(LBL[k]||'')+' '+(m==='Wajib diisi'?'wajib diisi':m);const fb=n.closest('.f');fb&&fb.classList.add('bad')}const fi=$('#f_'+k);fi&&fi.setAttribute('aria-invalid','true')});const f=$('#f_'+er[0][0])||$('#e_'+er[0][0]);f&&f.scrollIntoView({block:'center'});$('#f_'+er[0][0])&&$('#f_'+er[0][0]).focus();return}
 saveDoc(t,d);V[t]='prev';render();toast('Dokumen tersimpan di Riwayat')}
 if(a==='back'){V[t]='form';render()}
+if(a==='logout'){logout();return}
 if(a==='png'&&!b.dataset.id){png(t);return}
 if(a==='dl'||a==='pr'){if(a==='dl')toast('Pilih "Simpan sebagai PDF" di dialog cetak');pdf(t)}
 if(a==='new'){D[t]=null;V[t]='form';if(t==='inv'||t==='invd')V.sel=null;saveD();render()}
 if(a==='reset'&&confirm('Hapus semua data pada form ini?')){D[t]=null;saveD();render()}
 const id=b.dataset.id;if(id){const h=H.find(i=>i.id===id);if(!h)return;
-if(a==='del'){if(confirm('Hapus dokumen '+h.no+'?')){H=H.filter(i=>i.id!==id);LS('fdr_hist',H);render();toast('Dokumen dihapus')}return}
+if(a==='del'){if(confirm('Hapus dokumen '+h.no+'?')){H=H.filter(i=>i.id!==id);LS('fdr_hist',H);cdel('dokumen',id);render();toast('Dokumen dihapus')}return}
 CT=h.type;D[h.type]=JSON.parse(JSON.stringify(h.data));
 if(a==='dup'){const d=D[h.type];delete d._id;d.no=nextNo(h.type);d.tgl=today();if(h.type==='st')d.k_tgl=d.tgl;go(h.type,'form')}
 else if(a==='edit')go(h.type,'form');
 else{go(h.type,'prev');if(a==='pdf')setTimeout(()=>pdf(h.type),150);if(a==='png')setTimeout(()=>png(h.type),300)}saveD()}});
-addEventListener('hashchange',render);render();
+addEventListener('hashchange',render);
+/* cloud (Firebase): login + sinkronisasi riwayat, pengaturan, data master */
+const FBC={apiKey:"AIzaSyBHqvnY_dR8rwasnSjn-eouS62JF_IDjNs",authDomain:"fdrentcarinvoicegenerator.firebaseapp.com",projectId:"fdrentcarinvoicegenerator",storageBucket:"fdrentcarinvoicegenerator.firebasestorage.app",messagingSenderId:"257316518921",appId:"1:257316518921:web:f1a42217ebc96f1bcc4cd8"};
+let DB=null,AU=null,USER=null,UNS=[],ERRSHOWN=0,STT;
+const clean=o=>JSON.parse(JSON.stringify(o));
+const cloudErr=e=>{console.error('Cloud:',e);if(ERRSHOWN)return;ERRSHOWN=1;setTimeout(()=>ERRSHOWN=0,15000);
+toast(e&&e.code==='permission-denied'?'Akses ditolak oleh Firestore. Periksa Security Rules dan pastikan email akun sudah diizinkan.':'Gagal menyinkronkan ke cloud ('+((e&&(e.code||e.message))||e)+'). Data tetap aman di perangkat ini.',8000)};
+const cput=(col,id,o)=>{if(DB)FB.setDoc(FB.doc(DB,col,id),clean(o)).catch(cloudErr)};
+const cdel=(col,id)=>{if(DB)FB.deleteDoc(FB.doc(DB,col,id)).catch(cloudErr)};
+const saveSet=()=>{LS('fdr_set',ST);clearTimeout(STT);STT=setTimeout(()=>cput('app','settings',ST),700)};
+const saveMaster=()=>{LS('fdr_master',M);cput('app','master',M)};
+const GT=$('#gate'),LG=$('#lg'),GL=$('#gl');
+function gate(mode,msg){document.body.classList.toggle('lock',mode!=='off');GT.hidden=mode==='off';LG.hidden=mode!=='login';GL.hidden=mode==='login'||mode==='off';if(msg)GL.textContent=msg}
+const AERR=x=>{const c=x&&x.code||'';return /invalid-credential|wrong-password|user-not-found|invalid-email/.test(c)?'Email atau password salah.':c==='auth/too-many-requests'?'Terlalu banyak percobaan. Tunggu beberapa menit lalu coba lagi.':c==='auth/network-request-failed'?'Tidak ada koneksi internet.':c==='auth/user-disabled'?'Akun ini dinonaktifkan.':'Gagal masuk ('+(c||x.message||x)+')'};
+LG.addEventListener('submit',async e=>{e.preventDefault();const em=$('#le').value.trim(),pw=$('#lp').value,er=$('#le_err'),bt=LG.querySelector('button');er.textContent='';
+if(!em||!pw){er.textContent='Isi email dan password.';return}
+bt.disabled=true;try{await FB.signInWithEmailAndPassword(AU,em,pw)}catch(x){er.textContent=AERR(x)}finally{bt.disabled=false}});
+const refreshList=()=>{const l=$('#rl');if(l){const r=fl();l.innerHTML=rl(r);$('#cnt').textContent=r.length+' dokumen'}};
+function attach(){
+let first=1;
+UNS.push(FB.onSnapshot(FB.collection(DB,'dokumen'),sn=>{
+H=sn.docs.map(x=>x.data()).sort((a,b)=>(+b.id||0)-(+a.id||0));LS('fdr_hist',H);refreshList();
+if(first&&!sn.metadata.fromCache){first=0;if(!LS('fdr_mig')){const ids=new Set(H.map(h=>h.id)),miss=LEG.filter(h=>h&&h.id&&!ids.has(h.id));
+if(miss.length){const ch=[];for(let i=0;i<miss.length;i+=400)ch.push(miss.slice(i,i+400));
+Promise.all(ch.map(c=>{const b=FB.writeBatch(DB);c.forEach(h=>b.set(FB.doc(DB,'dokumen',h.id),clean(h)));return b.commit()})).then(()=>{LS('fdr_mig',1);toast(miss.length+' dokumen lama di perangkat ini diunggah ke cloud',5000)}).catch(cloudErr)}else LS('fdr_mig',1)}}
+},cloudErr));
+UNS.push(FB.onSnapshot(FB.doc(DB,'app','settings'),sn=>{if(sn.metadata.hasPendingWrites)return;
+if(sn.exists()){const v=sn.data();for(const k in DEF)ST[k]={...DEF[k],...(v[k]||{})};LS('fdr_set',ST);if(location.hash==='#/settings'&&!document.activeElement.matches('input,select,textarea'))render()}
+else if(!sn.metadata.fromCache)cput('app','settings',ST)},cloudErr));
+UNS.push(FB.onSnapshot(FB.doc(DB,'app','master'),sn=>{if(sn.metadata.hasPendingWrites)return;
+if(sn.exists()){const v=sn.data();M={veh:v.veh||[],cus:v.cus||[]};LS('fdr_master',M);if(location.hash==='#/settings'&&!document.activeElement.matches('input,select,textarea'))render()}
+else if(!sn.metadata.fromCache)cput('app','master',M)},cloudErr))}
+function detach(){UNS.forEach(f=>f());UNS=[]}
+const accHTML=()=>USER?`<fieldset><legend>Akun & sinkronisasi</legend><p>Masuk sebagai <b>${E(USER.email)}</b></p><p class="hint">${navigator.onLine?'Riwayat, pengaturan, dan data master tersinkron ke cloud. Draft form hanya tersimpan di perangkat ini.':'Sedang offline. Perubahan akan disinkronkan saat koneksi kembali.'}</p><div class="bar" style="margin-top:14px"><button type="button" data-a="logout">Keluar</button></div></fieldset>`:'';
+function logout(){if(!confirm('Keluar dari akun? Draft form yang belum disimpan di perangkat ini akan dihapus. Data di cloud tetap aman.'))return;
+FB.signOut(AU).then(()=>{['fdr_hist','fdr_set','fdr_master','fdr_draft'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});location.hash='';location.reload()}).catch(cloudErr)}
+function startCloud(){
+if(!window.FB){gate('err','Gagal memuat Firebase. Pastikan file firebase-bundle.js ikut diupload bersama index.html.');return}
+try{const app=FB.initializeApp(FBC);AU=FB.initializeAuth(app,{persistence:[FB.indexedDBLocalPersistence,FB.browserLocalPersistence]});
+try{DB=FB.initializeFirestore(app,{localCache:FB.persistentLocalCache({tabManager:FB.persistentMultipleTabManager()})})}catch(e){DB=FB.getFirestore(app)}
+FB.onAuthStateChanged(AU,u=>{USER=u;detach();if(u){gate('off');render();attach()}else gate('login')},e=>{gate('err','Gagal memeriksa login ('+(e.code||e.message)+')')})}
+catch(e){console.error(e);gate('err','Gagal memulai Firebase ('+(e.code||e.message)+').')}}
+render();startCloud();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body></html>

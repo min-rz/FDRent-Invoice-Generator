@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Hanya akun dengan email di daftar ini yang boleh membaca/menulis.
+    // Ganti dengan email akun yang Anda buat di Firebase Authentication.
+    function diizinkan() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'deadkill080@gmail.com'
+        ];
+    }
+
+    match /dokumen/{id} { allow read, write: if diizinkan(); }
+    match /app/{id}     { allow read, write: if diizinkan(); }
+
+    // Selain itu, semua ditolak.
+  }
+}
