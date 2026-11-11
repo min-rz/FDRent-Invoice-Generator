@@ -160,9 +160,9 @@ table{border-collapse:collapse;width:100%}
 .hr img{height:15mm;width:auto;flex:none}
 .hr b{flex:1;min-width:0;white-space:nowrap;text-align:center;font-size:15pt;line-height:1.15}
 .tt{flex:none;background:#ff0;border:1px solid #000;padding:4px 8px;white-space:nowrap;font:700 12pt/1.15 Carlito,Calibri,"Segoe UI",Arial,sans-serif}
-.paper .ad{text-align:center;margin-top:6px;font-size:11pt;line-height:1.55}
-.paper .ad .ln{display:block;white-space:nowrap}
-.paper .ad.wr .ln{white-space:normal}
+.paper .ad{text-align:center;margin:6px auto 0;padding:0 3mm;font-size:12pt;line-height:1.45}
+.paper .ad .ln{display:block;white-space:normal;text-wrap:balance}
+.hr b,.tt{position:relative;top:1.7mm}
 .hd::after{content:"";display:block;height:0;border-bottom:3px solid #000;box-shadow:1px 3px 2px rgba(0,0,0,.45);margin-top:8px}
 .pl{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:10px 0 8px}
 .paper .kv{width:auto;margin:0}.kv td{padding:0 6px 0 0;vertical-align:top}.kv td:first-child{white-space:nowrap;min-width:20mm}
@@ -374,9 +374,9 @@ function formHTML(t){const d=getD(t);CT=t;return (DL.has(t)?`<div class="bar dr"
 /* template dokumen */
 const kv=(r,c)=>`<table class="kv${c?' '+c:''}">${r.filter(x=>x[1]&&x[1]!=='-').map(x=>`<tr><td>${x[0]}</td><td>: ${x[1]}</td></tr>`).join('')}</table>`;
 const kopV=k=>String(ST.co[k]==null?'':ST.co[k]).trim().replace(/[.\s]+$/,'');
-const kop=()=>{const a=kopV('alamat'),l2=[kopV('telp')&&'No. Telepon : '+E(kopV('telp')),kopV('email')&&E(kopV('email')),kopV('nib')&&'NIB : '+E(kopV('nib')),kopV('npwp')&&'NPWP : '+E(kopV('npwp'))].filter(Boolean).join('. '),ls=[a&&'Alamat : '+E(a)+'.',l2].filter(Boolean);return ls.length?`<p class="ad">${ls.map(x=>`<span class="ln">${x}</span>`).join('')}</p>`:''};
+const kop=()=>{const a=kopV('alamat'),l1=[a&&'Alamat : '+E(a),kopV('telp')&&'No. Telepon : '+E(kopV('telp'))].filter(Boolean).join('. '),l2=[kopV('email')&&E(kopV('email')),kopV('nib')&&'NIB : '+E(kopV('nib')),kopV('npwp')&&'NPWP : '+E(kopV('npwp'))].filter(Boolean).join('. '),ls=[l1,l2].filter(Boolean);return ls.length?`<p class="ad">${ls.map(x=>`<span class="ln">${x}</span>`).join('')}</p>`:''};
 const hdr=t=>`<div class="hd"><div class="hr${t.length>14?' lg':''}">${ST.co.logo!==false?'<img src="logo.png" alt="">':''}<b>${E(String(ST.co.nama||'').trim())}</b><span class="tt${t.length>14?' lg':''}">${t}</span></div>${kop()}</div>`;
-function fitKop(){document.querySelectorAll('.paper .ad').forEach(a=>{a.classList.remove('wr');a.style.fontSize='';const w=a.clientWidth;let m=0;a.querySelectorAll('.ln').forEach(l=>{m=Math.max(m,l.scrollWidth)});if(m>w&&w>0){const f=11*w/m*.985;if(f<8.5)a.classList.add('wr');else a.style.fontSize=f.toFixed(2)+'pt'}})}
+function fitKop(){}
 const dh=(t,l,lb,d,tk)=>hdr(t)+`<div class="pl">${kv(l)}${kv([[lb,E(d.no)],['Tanggal',fd(d[tk||'tgl'])]],'mt')}</div>`;
 const per=d=>d.mulai?fd(d.mulai)+(d.selesai?' s/d '+fd(d.selesai):''):'';
 const perb=d=>d.mulai?fd(d.mulai)+(d.selesai&&d.selesai.slice(0,10)!==d.mulai.slice(0,10)?'<br>s/d '+fd(d.selesai):''):'';
